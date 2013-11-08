@@ -1,8 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <mach/mach_time.h>
 #include <sys/mman.h>
 #include <limits.h>
+
+#if defined(__linux__)
+#include <time.h>
+
+static inline uint64_t
+ns(void)
+{
+  struct timespec t;
+  clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t);
+  return t.tv_sec * 1000ULL * 1000ULL * 1000ULL + t.tv_nsec;
+}
+#elif defined(__APPLE__)
+#include <mach/mach_time.h>
+
+static inline uint64_t
+ns(void)
+{
+  return mach_absolute_time();
+}
+#endif
 
 #define LAST_INSTRUCTION 100
 typedef unsigned long long VALUE;
@@ -149,11 +168,11 @@ bench(void ** stream, void ** (*test)(void **))
   int i;
 
   test(stream);
-  start = mach_absolute_time();
+  start = ns();
   for (i = 0; i < 1000; i++) {
     test(stream);
   }
-  end = mach_absolute_time();
+  end = ns();
   return end - start;
 }
 
