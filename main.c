@@ -5,6 +5,7 @@
 
 #if defined(__linux__)
 #include <time.h>
+#include <stdint.h>
 
 static inline uint64_t
 ns(void)
