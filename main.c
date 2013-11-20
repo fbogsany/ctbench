@@ -170,7 +170,7 @@ bench(void ** stream, void ** (*test)(void **))
 
   test(stream);
   start = ns();
-  for (i = 0; i < 1000; i++) {
+  for (i = 0; i < 1000000; i++) {
     test(stream);
   }
   end = ns();
@@ -185,7 +185,7 @@ int main(int argc, char ** argv)
   uint64_t dt_time = bench(direct_threading_table(seq, SEQUENCE_COUNT), test_direct_threading);
   printf("testing context threading\n");fflush(NULL);
   uint64_t ct_time = bench(context_threading_table(seq, SEQUENCE_COUNT), test_context_threading);
-  printf("context threading: %lld ns\n", ct_time);
-  printf("direct threading: %lld ns\n", dt_time);
+  printf("context threading: %lld ns\n", ct_time / 1000000ULL);
+  printf("direct threading: %lld ns\n", dt_time / 1000000ULL);
   return 0;
 }
